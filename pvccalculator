@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gate PVC Calculator</title>
+    <style>
+        /* Add your CSS styling here */
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
+        .result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gate PVC Calculator</h2>
+        <label for="normalGates">Number of Normal Gates:</label>
+        <input type="number" id="normalGates" value="0"><br><br>
+        <label for="largeGates">Number of Large Gates:</label>
+        <input type="number" id="largeGates" value="0"><br><br>
+        <button onclick="calculatePVC()">Calculate</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculatePVC() {
+            // Get input values
+            var numNormalGates = parseInt(document.getElementById('normalGates').value, 10);
+            var numLargeGates = parseInt(document.getElementById('largeGates').value, 10);
+
+            // Perform calculations (simplified example; replace with actual logic)
+            var totalPVCNeeded = numNormalGates * 2 + numLargeGates * 3; // Simplify with your logic
+            var subAssemblyPieces = {
+                normalTops: numNormalGates,
+                normalLegs: numNormalGates * 4,
+                largeTops: numLargeGates,
+                largeLegs: numLargeGates * 4
+            };
+
+            // Update result div
+            var resultHTML = "<h3>Results</h3>";
+            resultHTML += "<p>Total PVC Pieces Needed: " + totalPVCNeeded + "</p>";
+            resultHTML += "<p>Sub-Assembly Pieces:</p>";
+            resultHTML += "<ul>";
+            for (var piece in subAssemblyPieces) {
+                resultHTML += "<li>" + piece + ": " + subAssemblyPieces[piece] + "</li>";
+            }
+            resultHTML += "</ul>";
+
+            document.getElementById('result').innerHTML = resultHTML;
+        }
+    </script>
+</body>
+</html>

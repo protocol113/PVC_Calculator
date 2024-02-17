@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PVC Gate Calculator</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Ensure the path to 'styles.css' is correct -->
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <!-- Make sure the 'src' attribute points to the correct location of your logo -->
+            <img src="logo.png" alt="Bluegrass Drone Racing Logo" id="logo">
+        </div>
+
+        <div class="dark-mode-toggle">
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <h2>PVC Gate Calculator</h2>
+        
+        <label for="normalGates">Number of Normal Gates:</label>
+        <input type="number" id="normalGates" value="0" min="0">
+        
+        <label for="largeGates">Number of Large Gates:</label>
+        <input type="number" id="largeGates" value="0" min="0">
+        
+        <label for="pricePerLength">Price per 10' PVC Length ($):</label>
+        <input type="number" id="pricePerLength" value="0" min="0" step="any">
+        
+        <button onclick="updateResults()">Calculate</button>
+        
+        <div id="instructions"></div>
+        <div id="costCalculation"></div>
+    </div>
+    <script>
+        // Paste the JavaScript functions here: calculateCutsAndLengths, generateSvgVisualization, updateResults
+        // Function to calculate cuts and lengths
+function calculateCutsAndLengths(numNormalGates, numLargeGates) {
+    const cutsForNormalTops = numNormalGates; // One cut per normal gate top
+    const cutsForNormalLegs = numNormalGates * 4; // Directly considering 4 legs needing to be cut per gate
+    const cutsForLargeLegs = numLargeGates * 3; // Each large gate requires 3 cuts in total for the legs
+
+    // Total cuts
+    const totalCuts = cutsForNormalTops + cutsForNormalLegs + cutsForLargeLegs;
+
+    // Lengths needed
+    const lengthsNeeded = {
+        "7' pieces": numNormalGates, // For the tops of normal gates
+        "3' pieces": numNormalGates * 4, // For the legs of normal gates
+        "6' pieces": numLargeGates * 2, // For the legs of large gates
+        "2' pieces": numLargeGates * 4, // Additional pieces for large gates legs
+    };
+
+    return {
+        totalCuts,
+        cutsForNormalTops,
+        cutsForNormalLegs,
+        cutsForLargeLegs,
+        lengthsNeeded
+    };
+}
+
+function generateSvgVisualization(numNormalGates, numLargeGates) {
+    let svgContent = '';
+    let yOffset = 20; // Start drawing from this Y position
+    const xOffset = 10;
+    const baseLineLength = 280; // Base pixel length for a 10ft piece
+    let maxWidth = baseLineLength + xOffset; // Initialize maxWidth with the base length plus offset
+    const lineHeight = 30; // Height increment for each new line
+
+    // Function to draw a line, label with quantity, and adjust maxWidth if needed
+    function drawLineAndLabel(lengthFeet, quantity, currentYOffset) {
+        const lineLength = (lengthFeet / 10) * baseLineLength;
+        const label = `${quantity}x ${lengthFeet}ft`;
+        const textMeasurement = measureSvgText(label, 14); // Assuming 14px font size for measurement
+        const totalWidth = xOffset + lineLength + textMeasurement + 10; // Calculate total width needed for line and text
+
+        // Update maxWidth if this line and label exceed current maxWidth
+        maxWidth = Math.max(maxWidth, totalWidth);
+
+        svgContent += `<line x1="${xOffset}" y1="${currentYOffset}" x2="${xOffset + lineLength}" y2="${currentYOffset}" stroke="black" />`;
+        svgContent += `<text x="${xOffset + lineLength + 5}" y="${currentYOffset + 4}" fill="black">${label}</text>`;
+    }
+
+    // Function to roughly measure the width of SVG text (simplified approach)
+    function measureSvgText(text, fontSize) {
+        return text.length * (fontSize * 0.6); // Simplified calculation, adjust as needed
+    }
+
+    // Logic for Normal Gates
+    if (numNormalGates > 0) {
+        drawLineAndLabel(7, numNormalGates, yOffset);
+        yOffset += lineHeight; // Increment Y offset after drawing
+        drawLineAndLabel(3, numNormalGates * 4, yOffset);
+        yOffset += lineHeight; // Increment Y offset after drawing
+    }
+
+    // Logic for Large Gates
+    if (numLargeGates > 0) {
+        drawLineAndLabel(10, numLargeGates, yOffset);
+        yOffset += lineHeight; // Increment Y offset after drawing
+        drawLineAndLabel(6, numLargeGates * 2, yOffset);
+        yOffset += lineHeight; // Increment Y offset after drawing
+        drawLineAndLabel(2, numLargeGates * 4, yOffset);
+        yOffset += lineHeight; // Increment Y offset after drawing
+    }
+
+    // Return the SVG content, using maxWidth for the SVG width and dynamically adjusted height
+    return `<svg height="${yOffset + 20}" width="${maxWidth}">${svgContent}</svg>`;
+}
+
+function generateCuttingInstructions(numNormalGates, numLargeGates) {
+    let instructions = "";
+
+    if (numNormalGates > 0) {
+        instructions += `For ${numNormalGates} Normal Gate(s): Cut ${numNormalGates} 10ft PVC into ${numNormalGates} 7ft pieces for the top. Use the remaining 3ft pieces for legs. Cut additional 10ft PVCs into three 3ft pieces each for more legs.\n`;
+    }
+    if (numLargeGates > 0) {
+        instructions += `For ${numLargeGates} Large Gate(s): Use ${numLargeGates} 10ft PVC uncut for the top. Cut ${numLargeGates * 2} 10ft PVCs into one 6ft piece and two 2ft pieces each for legs.\n`;
+    }
+
+    return instructions;
+}
+
+function updateResults() {
+    const numNormalGates = parseInt(document.getElementById('normalGates').value || '0', 10);
+    const numLargeGates = parseInt(document.getElementById('largeGates').value || '0', 10);
+    const pricePerLength = parseFloat(document.getElementById('pricePerLength').value || '0');
+
+    // Generate cutting instructions and SVG visualization (not shown here for brevity)
+    const instructions = generateCuttingInstructions(numNormalGates, numLargeGates);
+    document.getElementById('instructions').innerText = instructions;
+
+    // Calculate the total number of PVC pieces required
+    const totalPvcNeeded = calculateTotalPvcNeeded(numNormalGates, numLargeGates);
+    const totalCost = totalPvcNeeded * pricePerLength;
+
+    // Display the total number of PVC pieces and total cost
+    const costCalculationText = `Total PVC Pieces Needed: ${totalPvcNeeded}\nTotal Cost: $${totalCost.toFixed(2)}`;
+    document.getElementById('costCalculation').innerText = costCalculationText;
+}
+
+function calculateTotalPvcNeeded(numNormalGates, numLargeGates) {
+    // Simplified example calculation, replace with your specific logic
+    const pvcForNormalGates = numNormalGates * 2; // Example: 2 pieces per normal gate
+    const pvcForLargeGates = numLargeGates * 3; // Example: 3 pieces per large gate
+
+    return pvcForNormalGates + pvcForLargeGates;
+}
+
+// Function to toggle dark mode
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+
+    // Event listener for the dark mode toggle switch
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        
+        darkModeToggle.addEventListener('change', toggleDarkMode);
+        
+        // Optional: Check for saved dark mode preference in localStorage and set the toggle accordingly
+        const prefersDarkMode = localStorage.getItem('prefersDarkMode') === 'true';
+        if (prefersDarkMode) {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+        }
+    });
+
+    // Function to update dark mode preference in localStorage
+    function updateLocalStorage() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        localStorage.setItem('prefersDarkMode', isDarkMode);
+    }
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+/* styles.css */
+
+/* Color Variables */
+:root {
+    --blue: #007bff; /* Replace with the specific blue from the logo */
+    --light-blue: #66b0ff; /* Lighter blue for hover effects */
+    --dark-gray: #343a40; /* Dark gray for dark mode background */
+    --gray: #6c757d; /* Gray for borders and shadows */
+    --light-gray: #f8f9fa; /* Light gray for light mode background */
+    --white: #ffffff;
+    --black: #000000;
+}
+
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-gray);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background-color: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: var(--blue);
+    font-weight: 600;
+    text-align: center;
+}
+
+label {
+    color: var(--gray);
+    margin-top: 20px;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid var(--gray);
+    border-radius: 4px;
+}
+
+button {
+    background-color: var(--blue);
+    color: var(--white);
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: var(--light-blue);
+}
+
+#result, #instructions, #costCalculation {
+    background-color: var(--light-gray);
+    padding: 10px;
+    margin-top: 20px;
+    border-left: 4px solid var(--blue);
+}
+
+/* Toggle Switch Styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 10px auto;
+    margin-bottom: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--gray);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--white);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--blue);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: var(--dark-gray);
+    color: var(--white); /* Ensure all text is white for contrast */
+}
+
+body.dark-mode .container {
+    background-color: var(--gray);
+    color: var(--white); /* Text color in containers */
+}
+body.dark-mode .container h2 {
+    color: var(--white); /* This specifically changes the title text to white */
+}
+body.dark-mode input,
+body.dark-mode button {
+    background-color: var(--dark-gray);
+    border: 1px solid var(--light-blue);
+    color: var(--white); /* Text color in form elements */
+}
+
+body.dark-mode button {
+    background-color: var(--blue);
+}
+
+body.dark-mode button:hover {
+    background-color: var(--light-blue);
+}
+
+body.dark-mode #result,
+body.dark-mode #instructions,
+body.dark-mode #costCalculation {
+    background-color: var(--dark-gray);
+    border-left-color: var(--blue);
+    color: var(--white); /* Text color in result displays */
+}
+
+body.dark-mode .slider {
+    background-color: var(--light-gray);
+}
+
+/* Update label colors specifically for dark mode */
+body.dark-mode label {
+    color: var(--white); /* Label text color */
+}
+
+/* Possibly adjust link colors if needed */
+body.dark-mode a {
+    color: var(--light-blue);
+}
+
+
+.logo img {
+    max-width: 50%;
+    height: auto;
+    display: block;
+    margin: 0 auto 30px;
+}
